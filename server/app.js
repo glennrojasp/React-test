@@ -1,7 +1,7 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
-const dataJs = require('./data');
+const { getAnimals, createAnimal,  updateAnimal, deleteAnimal} = require('./controler');
 
 const app = express();
 
@@ -12,22 +12,13 @@ app.use(express.urlencoded({ extended: false }));
 
 
 /* Implement your routes here */
+app.get('/data', getAnimals);
 
-app.get('/', (req, res) => {
+app.post('/data', createAnimal);
 
-    let dataJsJson = dataJs;
+app.put('/data/:id', updateAnimal);
 
-    res.send(dataJsJson);
-});
-
-
-app.get('/getDataFromServer', (req, res) => {
-
-    let dataJsJson = dataJs;
-
-    res.send(dataJsJson);
-});
-
+app.delete('/data/:id', deleteAnimal);
 
 
 module.exports = app;
