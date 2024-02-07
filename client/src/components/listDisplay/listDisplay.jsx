@@ -112,7 +112,7 @@ export const ListDisplay = () => {
                                 ))}
                             </tbody>
                         </table>
-                        <PopUpForm addAnimal={addAnimal}/>
+                        <PopUpForm className={displayForm ? 'display-form' : 'hide-form'} addAnimal={addAnimal}/>
                     </div>
                 </div>
             </div>
