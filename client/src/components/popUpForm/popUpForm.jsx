@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
+import './popUpForm';
 
-export const PopUpForm = ({item={}, addAnimal}) => {
+export const PopUpForm = ({className, item={}, addAnimal}) => {
     const [animalData, setAnimalData] = useState({});
     const [animalName, setAnnimalName] = useState('');
     const [animalAge, setAnimalAge] = useState('');
     const [animalSpecies, setAnimalSpecies] = useState('');
     const [formTitle, setFormTitle] = useState('Add new animal');
-    const [formSubmit, setFormSubmit] = useState('Add');
+    const [formSubmit, setFormSubmit] = useState('Create');
 
     useEffect(() => {
         if(!item && item.id){
@@ -53,18 +54,18 @@ export const PopUpForm = ({item={}, addAnimal}) => {
     
 
     return (
-        <>
+        <div className={className}>
+            <div className='title-container'><h2>{formTitle}</h2></div>
             <form submit={() => handleFormSubmit}>
-                <h2>{formTitle}</h2>
                 <label for="animalName">Name</label>
                 <input type="text" name="animalName" value={animalName} onChange={handleChange}/>
                 <label for="animalAge">Age</label>
                 <input type="text" name="animalAge" value={animalAge} onChange={handleChange}/>
                 <label for="animalSpecies">Species</label>
                 <input type="text" name="animalSpecies" value={animalSpecies} onChange={handleChange}/>
-                <button type="button" class="btn" onClick={handleFormSubmit}>{formSubmit}</button>
-                <button type="button" class="btn cancel" onClick="closeForm()">Close</button>
+                <button type="button" className="btn btn-edit" onClick={handleFormSubmit}>{formSubmit}</button>
+                <button type="button" className="btn btn-delete" onClick="closeForm()">Close</button>
             </form>
-        </>
+        </div>
     )
 }
