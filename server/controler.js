@@ -14,16 +14,21 @@ const createAnimal = (req, res) => {
 };
 
 const updateAnimal = (req, res) => {
-    const animalId = req.params.id;
+    console.log("req", req.params);
+    const animalId = Number(req.params.id);
+    console.log("req.body;", req.body);
     const updatedAnimal = req.body;
+    console.log("dataJS[animalIndex]", updatedAnimal);
 
     const animalIndex = dataJS.findIndex(animal => animal.id === animalId);
+    console.log("animalIndex", animalIndex);
 
     if (animalIndex !== -1 ){
         dataJS[animalIndex] = {
             ...dataJS[animalIndex],
             ...updatedAnimal,
         };
+       
         res.json(dataJS[animalIndex]);
     }else{
         res.status(404).json({ error: 'Animal no encontrado'})

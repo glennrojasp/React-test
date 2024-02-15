@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import './popUpForm';
+import './popUpForm.scss';
 
-export const PopUpForm = ({className, item={}, addAnimal}) => {
+export const PopUpForm = ({className, item, handleAnimal, closeForm}) => {
     const [animalData, setAnimalData] = useState({});
     const [animalName, setAnnimalName] = useState('');
     const [animalAge, setAnimalAge] = useState('');
@@ -10,7 +10,7 @@ export const PopUpForm = ({className, item={}, addAnimal}) => {
     const [formSubmit, setFormSubmit] = useState('Create');
 
     useEffect(() => {
-        if(!item && item.id){
+        if(item.id){
             setAnimalData(item);
             setAnnimalName(item.name);
             setAnimalAge(item.age);
@@ -18,19 +18,22 @@ export const PopUpForm = ({className, item={}, addAnimal}) => {
             setFormTitle("Update animal");
             setFormSubmit('Update');
         }
-    }, [])
+    }, [item])
 
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        addAnimal({'name': animalName , 'age': animalAge, 'species': animalSpecies})
+        if(animalData.id){
+            handleAnimal({'id':item.id ,'name': animalName , 'age': animalAge, 'species': animalSpecies})
+        }else{
+            handleAnimal({'name': animalName , 'age': animalAge, 'species': animalSpecies});
+        }
+        
 
     }
 
     const handleChange = (e) => {
-    //    console.log('testing', e.target);
-    //    console.log('testing name', e.target.name);
-    //    console.log('testing value', e.target.value);
+
         switch(e.target.name){
             case "animalName":{
                 setAnnimalName(e.target.value);
@@ -64,7 +67,7 @@ export const PopUpForm = ({className, item={}, addAnimal}) => {
                 <label for="animalSpecies">Species</label>
                 <input type="text" name="animalSpecies" value={animalSpecies} onChange={handleChange}/>
                 <button type="button" className="btn btn-edit" onClick={handleFormSubmit}>{formSubmit}</button>
-                <button type="button" className="btn btn-delete" onClick="closeForm()">Close</button>
+                <button type="button" className="btn btn-delete" onClick={closeForm}>Cancel</button>
             </form>
         </div>
     )

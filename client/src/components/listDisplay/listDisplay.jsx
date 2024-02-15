@@ -7,7 +7,10 @@ import './listDisplay.scss';
 export const ListDisplay = () => {
     const [dataJson, setDataJson] = useState([]);
     const [newAnimal, setNewAnimal] = useState({});
-    const [displayForm , setDisplayForm] = useState(false);
+    const [displayAddForm , setDisplayAddForm] = useState(false);
+    const [displayUpdateForm , setDisplayUpdateForm] = useState(false);
+    const [updatedAnimal, setUpdatedAnimal] = useState({});
+    const [formOpen, setFormOpen] = useState(false)
 
 
     useEffect(() => {
@@ -33,12 +36,43 @@ export const ListDisplay = () => {
         return idNumber;
     };
 
-    const handleFormVisibility = () => {
-        setDisplayForm(!displayForm);
-        console.log(displayForm);
+    const handleFormVisibility = (isEditForm, cancelButton, createAnimal) => {
+
+        
+
+        if(formOpen){
+            setDisplayUpdateForm(false);
+            setFormOpen(false);
+        }else{
+            setFormOpen(true);
+        }
+
+        if(isEditForm){
+            setDisplayUpdateForm(true);
+        }else {
+            setUpdatedAnimal({});
+        }
+
+        if(cancelButton){
+            setDisplayUpdateForm(false);
+            setDisplayAddForm(false);
+            setUpdatedAnimal({});
+        }
+
+        if(createAnimal){
+            setDisplayAddForm(true);
+        }
+
+    };
+
+    const editOpenForm = (animal) => {
+        setUpdatedAnimal(animal);
+        handleFormVisibility(true, false, false);
+
     };
 
     const addAnimal = async (animalData) => {
+        setDisplayAddForm(false);
         const id = generateId();
         
         let animal= { "id": id, ...animalData};
@@ -68,11 +102,34 @@ export const ListDisplay = () => {
         }
     };
 
-    const updateAnimal = async (item) => {
-        console.log("e", item);
+    const updateAnimal = async (animal) => {
+        setUpdatedAnimal(animal);
+        console.log("anima", animal);
+        handleFormVisibility(true, false, false);
+        try {
+            const response = await fetch(`http://localhost:3030/data/${animal.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(animal),
+            });
+
+            if (response.ok) {
+                // Manejar el éxito, por ejemplo, limpiar el formulario
+                setUpdatedAnimal({});
+                    // Reinicializa aquí los campos del nuevo elemento después de la creación
+            } else {
+                // Manejar errores, por ejemplo, mostrar un mensaje de error
+                console.error('Error al edit el elemento');
+            }
+        } catch (error) {
+            console.error('Error de red', error);
+        }
     }
 
     const deleteAnimal = async (itemId) => {
+        setDisplayUpdateForm(false);
         try{
             const response = await fetch(`http://localhost:3030/data/${itemId}`, {
                 method: 'DELETE',
@@ -101,18 +158,24 @@ export const ListDisplay = () => {
                                     <th className="column1">Name</th>
                                     <th className="column2">Age</th>
                                     <th className="column3">Species</th>
-                                    <th className="column4">Interactions <button className="btn btn-create" onClick={handleFormVisibility}>Create</button></th>
+                                    <th className="column4">Interactions <button className="btn btn-create" onClick={() => handleFormVisibility(false, false, true)}>Create</button></th>
+                                </tr>
+                            </thead>
+                            <thead className="table-head-mobile"> 
+                                <tr className="table100-head table-tr-mobile">
+                                    <th className="column4"> <button className="btn btn-create" onClick={() => handleFormVisibility(false, false, true)}>Create</button></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {dataJson.map((item) => (
 
-                                    <ItemList key={item.id} item={item} updateAnimal={updateAnimal} deleteAnimal={deleteAnimal} /> 
+                                    <ItemList key={item.id} item={item} editOpenForm={editOpenForm} deleteAnimal={deleteAnimal} /> 
                                   
                                 ))}
                             </tbody>
                         </table>
-                        <PopUpForm className={displayForm ? 'display-form' : 'hide-form'} addAnimal={addAnimal}/>
+                        <PopUpForm className={displayAddForm ? 'display-form' : 'hide-form'} handleAnimal={addAnimal} item={[]} closeForm={() => handleFormVisibility(false, true, false)}/>
+                        <PopUpForm className={displayUpdateForm ? 'display-form' : 'hide-form'} handleAnimal={updateAnimal} item={updatedAnimal} closeForm={() => handleFormVisibility(false, true, false)}/>
                     </div>
                 </div>
             </div>
